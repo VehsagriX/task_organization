@@ -51,7 +51,7 @@ class ActivityClassificationORM(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
-    activity_id: Mapped[list["ActivityORM"]] = relationship(
+    activity_list: Mapped[list["ActivityORM"]] = relationship(
         back_populates="class_activity"
     )
 
@@ -61,10 +61,10 @@ class ActivityORM(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
-
+    class_activity_id = Mapped[int] = mapped_column(ForeignKey("activity_classification.id"))
 
     class_activity: Mapped["ActivityClassificationORM"] = relationship(
-        back_populates="activity_id"
+        back_populates="activity_list"
     )
     organization_connection: Mapped[list["OrganizationORM"]] = relationship(
         back_populates="class_activity"
