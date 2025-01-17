@@ -4,50 +4,51 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database import Base
 
 
+
+
+
 class OrganizationORM(Base):
-    __tablename__ = "organization"
+    __tablename__ = "organization_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
-    building_id: Mapped[int] = mapped_column(ForeignKey("building.id"))
-    building: Mapped["BuildingORM"]= relationship(back_populates="organization")
+    building_id: Mapped[int] = mapped_column(ForeignKey("building_table.id"))
+    building: Mapped["BuildingORM"] = relationship(back_populates="organization_build")
 
     numbers: Mapped[list["NumberOrm"]] = relationship(
-        back_populates="organization"
+        back_populates="organization_nums"
     )
 
-    class_activity: Mapped[list["ActivityORM"]] = relationship(
-        back_populates="organization_connection"
+    organization_actives: Mapped[list["ActivityORM"]] = relationship(
+        back_populates="organization_connection",
+        secondary="organization_activity_table"
     )
-
 
 
 class BuildingORM(Base):
-    __tablename__ = "building"
+    __tablename__ = "building_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     address: Mapped[str]
     latitude: Mapped[float]
     longitude: Mapped[float]
-    organization: Mapped["OrganizationORM"] = relationship(back_populates="building")
-
+    organization_build: Mapped["OrganizationORM"] = relationship(back_populates="building")
 
 
 class NumberOrm(Base):
-    __tablename__ = "number"
+    __tablename__ = "number_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     phone: Mapped[str]
-    organization_id: Mapped[int] = mapped_column(ForeignKey("organization.id"))
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organization_table.id"))
 
-    organization: Mapped["OrganizationORM"] = relationship(
+    organization_nums: Mapped["OrganizationORM"] = relationship(
         back_populates="numbers"
     )
 
 
-
 class ActivityClassificationORM(Base):
-    __tablename__ = "activity_classification"
+    __tablename__ = "activity_classification_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
@@ -57,24 +58,23 @@ class ActivityClassificationORM(Base):
 
 
 class ActivityORM(Base):
-    __tablename__ = "activity"
+    __tablename__ = "activity_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
-    class_activity_id = Mapped[int] = mapped_column(ForeignKey("activity_classification.id"))
+    class_activity_id: Mapped[int] = mapped_column(ForeignKey("activity_classification_table.id"))
 
     class_activity: Mapped["ActivityClassificationORM"] = relationship(
         back_populates="activity_list"
     )
     organization_connection: Mapped[list["OrganizationORM"]] = relationship(
-        back_populates="class_activity"
+        back_populates="organization_actives",
+        secondary="organization_activity_table"
     )
 
 
-
 class OrganizationActivityORM(Base):
-    __tablename__ = "organization_activity"
+    __tablename__ = "organization_activity_table"
 
-    organization_id: Mapped[int] = mapped_column(ForeignKey("organization.id"))
-    activity_id: Mapped[int] = mapped_column(ForeignKey("activity.id"))
-
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organization_table.id"), primary_key=True)
+    activity_id: Mapped[int] = mapped_column(ForeignKey("activity_table.id"), primary_key=True)
