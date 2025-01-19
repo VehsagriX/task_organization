@@ -4,16 +4,16 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database import Base
 
 
-
-
-
 class OrganizationORM(Base):
     __tablename__ = "organization_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
     building_id: Mapped[int] = mapped_column(ForeignKey("building_table.id"))
-    building: Mapped["BuildingORM"] = relationship(back_populates="organization_build")
+
+    building: Mapped["BuildingORM"] = relationship(
+        back_populates="organization_list"
+    )
 
     numbers: Mapped[list["NumberOrm"]] = relationship(
         back_populates="organization_nums"
@@ -32,7 +32,7 @@ class BuildingORM(Base):
     address: Mapped[str]
     latitude: Mapped[float]
     longitude: Mapped[float]
-    organization_build: Mapped["OrganizationORM"] = relationship(back_populates="building")
+    organization_list: Mapped[list["OrganizationORM"]] = relationship(back_populates="building")
 
 
 class NumberOrm(Base):
