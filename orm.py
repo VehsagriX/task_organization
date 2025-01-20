@@ -1,6 +1,7 @@
-from sqlalchemy import select, insert
-from sqlalchemy.orm import joinedload, selectinload, aliased
-from models import OrganizationORM, BuildingORM, NumberOrm, ActivityClassificationORM, ActivityORM
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload, selectinload
+from models import OrganizationORM, BuildingORM, NumberOrm, ActivityClassificationORM, ActivityORM, \
+    OrganizationActivityORM
 from database import Base, engine, my_session
 from schemas import OrganizationRelNumbsAndActivity, OrganizationDTO
 
@@ -12,8 +13,6 @@ class Orm:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
-
-
 
     @staticmethod
     async def insert_organization():
@@ -175,7 +174,7 @@ class Orm:
             await session.commit()
 
     @staticmethod
-    async def get_organization_rel_building():
+    async def get_organizations_rel_building():
         """
         select o.id, o.title, b.address
         from organization_table o
@@ -191,7 +190,6 @@ class Orm:
                 .options(selectinload(OrganizationORM.numbers))
                 .options(selectinload(OrganizationORM.organization_actives))
 
-
             )
             res = await session.execute(query)
 
@@ -199,15 +197,12 @@ class Orm:
 
             print(f'{result=}')
 
-
             result_dto = [OrganizationRelNumbsAndActivity.model_validate(row, from_attributes=True) for row in result]
             print(f'{result_dto=}')
             return result_dto
 
-
-
     @staticmethod
-    async def get_organization_by_address(some_address = 'г. Москва, ул. Ленина 1, офис 17'):
+    async def get_organizations_by_address(some_address: str = 'г. Москва, ул. Ленина 1, офис 17'):
         """
         Select *
         From organization_table
@@ -226,11 +221,59 @@ class Orm:
             )
             res = await session.execute(query)
             result = res.scalars().all()
-            print(f'{result=}\n')
 
             result_dto = [OrganizationDTO.model_validate(row, from_attributes=True) for row in result]
             print(f'{result_dto=}')
             return result_dto
 
+    @staticmethod
+    async def get_organization_by_id(id_org: int = 3):
+        async with my_session() as session:
+            query = (
+                select(
+                    OrganizationORM,
+                )
+                .options(joinedload(OrganizationORM.building))
+                .options(selectinload(OrganizationORM.numbers))
+                .options(selectinload(OrganizationORM.organization_actives))
+                .filter(OrganizationORM.id == id_org)
+            )
 
+            res = await session.execute(query)
+            result = res.scalars().one_or_none()
+            print(f"{result=}")
+            if result is None:
+                raise ...
 
+            result_dto = OrganizationRelNumbsAndActivity.model_validate(result, from_attributes=True)
+            print(f"{result_dto}")
+            return result_dto
+
+    @staticmethod
+    async def get_organization_by_activity(activity: str = 'Мясная продукция'):
+        async with my_session() as session:
+            """
+            SELECT o.title AS organization_title
+            FROM activity_table a
+            JOIN organization_activity_table oa ON a.id = oa.activity_id
+            JOIN organization_table o ON oa.organization_id = o.id
+            WHERE a.name = 'Мясная продукция';
+            """
+
+            query = (
+                select(OrganizationORM)
+                .select_from(ActivityORM)
+
+                .join(OrganizationActivityORM, OrganizationActivityORM.activity_id == ActivityORM.id)
+                .join(OrganizationORM, OrganizationORM.id == OrganizationActivityORM.organization_id)
+                .filter(ActivityORM.name == activity)
+
+            )
+
+            res = await session.execute(query)
+            result = res.scalars().all()
+            print(f'{result=}')
+
+            res_dto = [OrganizationDTO.model_validate(row, from_attributes=True) for row in result]
+
+            print(f'{res_dto=}')
