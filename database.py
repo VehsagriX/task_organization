@@ -6,9 +6,9 @@ from sqlalchemy.orm import DeclarativeBase
 from config import settings
 
 
-engine = create_async_engine(url=settings.DATABASE_URL, echo=True)
-
-my_session = async_sessionmaker(engine, expire_on_commit=False)
+engine_postg = create_async_engine(url=settings.DATABASE_URL, echo=True)
+engine_sqlite = create_async_engine("sqlite+aiosqlite:///organization.db")
+my_session = async_sessionmaker(engine_sqlite, expire_on_commit=False)
 
 
 

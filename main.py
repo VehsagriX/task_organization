@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 import uvicorn
 
 from models import OrganizationORM
@@ -29,9 +29,9 @@ async def main():
     # await Orm.get_organization_by_id() #вывод информации об организации по её идентификатору
     # await Orm.get_organization_by_activity() # список всех организаций, которые относятся к указанному виду деятельности
 
-app = FastAPI(title="FastAPI")
+app = FastAPI(title="Организации")
 
-@app.get('/organizations')
+@app.get('/organizations', status_code=status.HTTP_200_OK)
 async def get_all_organizations():
     res = await Orm.get_organizations_rel_building()
     return {'data': res}

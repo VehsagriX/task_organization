@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload, selectinload
 from models import OrganizationORM, BuildingORM, NumberOrm, ActivityClassificationORM, ActivityORM, \
     OrganizationActivityORM
-from database import Base, engine, my_session
+from database import Base, engine_sqlite, my_session
 from schemas import OrganizationRelNumbsAndActivity, OrganizationDTO
 
 
@@ -10,7 +10,7 @@ class Orm:
 
     @staticmethod
     async def create_tables():
-        async with engine.begin() as conn:
+        async with engine_sqlite.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
