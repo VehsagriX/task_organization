@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, selectinload
-from models import OrganizationORM, BuildingORM, NumberOrm, ActivityClassificationORM, ActivityORM, \
+from src.models import OrganizationORM, BuildingORM, NumberOrm, ActivityClassificationORM, ActivityORM, \
     OrganizationActivityORM
-from database import Base, engine_sqlite, my_session
+from src.database import Base, engine_sqlite, my_session
 from schemas import OrganizationRelNumbsAndActivity, OrganizationDTO
 
 
