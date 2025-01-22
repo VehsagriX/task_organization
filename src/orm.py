@@ -8,8 +8,6 @@ from schemas import OrganizationRelNumbsAndActivity, OrganizationDTO
 
 class Orm:
 
-
-
     @staticmethod
     async def insert_organization():
         async with my_session() as session:
@@ -199,15 +197,6 @@ class Orm:
 
     @staticmethod
     async def get_organizations_by_address(some_address: str = 'г. Москва, ул. Ленина 1, офис 17'):
-        """
-        Select *
-        From organization_table
-        where building_id = (select id
-						From building_table
-						WHERE address = 'г. Москва, ул. Ленина 1, офис 17'
-						)
-        """
-
         async with my_session() as session:
             query = (
                 select(
@@ -237,9 +226,6 @@ class Orm:
 
             res = await session.execute(query)
             result = res.scalars().one_or_none()
-            print(f"{result=}")
-            if result is None:
-                raise ...
 
             result_dto = OrganizationRelNumbsAndActivity.model_validate(result, from_attributes=True)
             print(f"{result_dto}")
@@ -268,8 +254,8 @@ class Orm:
 
             res = await session.execute(query)
             result = res.scalars().all()
-            print(f'{result=}')
+            print(result)
 
             res_dto = [OrganizationDTO.model_validate(row, from_attributes=True) for row in result]
-
             print(f'{res_dto=}')
+            return res_dto
