@@ -189,10 +189,8 @@ class Orm:
 
             result = res.unique().scalars().all()
 
-            print(f'{result=}')
-
             result_dto = [OrganizationRelNumbsAndActivity.model_validate(row, from_attributes=True) for row in result]
-            print(f'{result_dto=}')
+
             return result_dto
 
     @staticmethod
@@ -208,7 +206,7 @@ class Orm:
             result = res.scalars().all()
 
             result_dto = [OrganizationDTO.model_validate(row, from_attributes=True) for row in result]
-            print(f'{result_dto=}')
+
             return result_dto
 
     @staticmethod
@@ -228,7 +226,7 @@ class Orm:
             result = res.scalars().one_or_none()
 
             result_dto = OrganizationRelNumbsAndActivity.model_validate(result, from_attributes=True)
-            print(f"{result_dto}")
+
             return result_dto
 
     @staticmethod
@@ -257,5 +255,5 @@ class Orm:
             print(result)
 
             res_dto = [OrganizationDTO.model_validate(row, from_attributes=True) for row in result]
-            print(f'{res_dto=}')
+
             return res_dto
