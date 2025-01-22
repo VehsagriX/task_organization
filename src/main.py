@@ -4,6 +4,7 @@ import os, sys
 import asyncio
 from models import OrganizationORM
 from orm import Orm
+from schemas import OrganizationRelNumbsAndActivity
 
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
@@ -16,7 +17,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 #     return organization
 
 async def main():
-    await Orm.create_tables()
+
     await Orm.insert_buildings()
     await Orm.insert_organization()
     await Orm.insert_numbers()
@@ -26,17 +27,14 @@ async def main():
 
 
 
-    # await Orm.get_organizations_rel_building() #получить все организации
-    # await Orm.get_organizations_by_address() #список всех организаций находящихся в конкретном здании
-    # await Orm.get_organization_by_id() #вывод информации об организации по её идентификатору
-    # await Orm.get_organization_by_activity() # список всех организаций, которые относятся к указанному виду деятельности
+
 
 app = FastAPI(title="Организации")
 
 @app.get('/organizations', status_code=status.HTTP_200_OK)
-async def get_all_organizations():
+async def get_all_organizations() -> list[OrganizationRelNumbsAndActivity]:
     res = await Orm.get_organizations_rel_building()
-    return {'data': res}
+    return  res
 
 
 
@@ -68,5 +66,6 @@ async def get_organizations_by_activity(activity_name: str):
 
 
 if __name__ == "__main__":
-    # uvicorn.run(app="main:app", reload=True)
-    asyncio.run(main())
+
+    # asyncio.run(main())
+    uvicorn.run(app="main:app", reload=True)

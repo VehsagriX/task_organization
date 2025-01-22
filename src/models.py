@@ -1,3 +1,5 @@
+from tkinter.constants import CASCADE
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -9,7 +11,7 @@ class OrganizationORM(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
-    building_id: Mapped[int] = mapped_column(ForeignKey("building_table.id"))
+    building_id: Mapped[int] = mapped_column(ForeignKey("building_table.id", ondelete="CASCADE"))
 
     building: Mapped["BuildingORM"] = relationship(
         back_populates="organization_list"
@@ -32,6 +34,8 @@ class BuildingORM(Base):
     address: Mapped[str]
     latitude: Mapped[float]
     longitude: Mapped[float]
+
+
     organization_list: Mapped[list["OrganizationORM"]] = relationship(back_populates="building")
 
 
@@ -40,7 +44,7 @@ class NumberOrm(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     phone: Mapped[str]
-    organization_id: Mapped[int] = mapped_column(ForeignKey("organization_table.id"))
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organization_table.id",  ondelete="CASCADE"))
 
     organization_nums: Mapped["OrganizationORM"] = relationship(
         back_populates="numbers"
@@ -52,6 +56,8 @@ class ActivityClassificationORM(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
+
+
     activity_list: Mapped[list["ActivityORM"]] = relationship(
         back_populates="class_activity"
     )
@@ -62,7 +68,7 @@ class ActivityORM(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
-    class_activity_id: Mapped[int] = mapped_column(ForeignKey("activity_classification_table.id"))
+    class_activity_id: Mapped[int] = mapped_column(ForeignKey("activity_classification_table.id", ondelete="CASCADE"))
 
     class_activity: Mapped["ActivityClassificationORM"] = relationship(
         back_populates="activity_list"
@@ -76,5 +82,5 @@ class ActivityORM(Base):
 class OrganizationActivityORM(Base):
     __tablename__ = "organization_activity_table"
 
-    organization_id: Mapped[int] = mapped_column(ForeignKey("organization_table.id"), primary_key=True)
-    activity_id: Mapped[int] = mapped_column(ForeignKey("activity_table.id"), primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organization_table.id", ondelete="CASCADE"), primary_key=True)
+    activity_id: Mapped[int] = mapped_column(ForeignKey("activity_table.id", ondelete="CASCADE"), primary_key=True)

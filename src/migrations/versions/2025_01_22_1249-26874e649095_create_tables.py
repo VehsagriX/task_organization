@@ -1,8 +1,8 @@
 """create tables
 
-Revision ID: b059879feb01
+Revision ID: 26874e649095
 Revises: 
-Create Date: 2025-01-21 20:28:05.323727
+Create Date: 2025-01-22 12:49:02.998672
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "b059879feb01"
+revision: str = "26874e649095"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -43,6 +43,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["class_activity_id"],
             ["activity_classification_table.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -52,8 +53,7 @@ def upgrade() -> None:
         sa.Column("title", sa.String(), nullable=False),
         sa.Column("building_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["building_id"],
-            ["building_table.id"],
+            ["building_id"], ["building_table.id"], ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -63,8 +63,7 @@ def upgrade() -> None:
         sa.Column("phone", sa.String(), nullable=False),
         sa.Column("organization_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["organization_id"],
-            ["organization_table.id"],
+            ["organization_id"], ["organization_table.id"], ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -73,12 +72,10 @@ def upgrade() -> None:
         sa.Column("organization_id", sa.Integer(), nullable=False),
         sa.Column("activity_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["activity_id"],
-            ["activity_table.id"],
+            ["activity_id"], ["activity_table.id"], ondelete="CASCADE"
         ),
         sa.ForeignKeyConstraint(
-            ["organization_id"],
-            ["organization_table.id"],
+            ["organization_id"], ["organization_table.id"], ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("organization_id", "activity_id"),
     )
