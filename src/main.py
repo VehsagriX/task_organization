@@ -1,13 +1,11 @@
 from fastapi import FastAPI, HTTPException, status
 import uvicorn
 import os, sys
-import asyncio
-from models import OrganizationORM
-from orm import Orm
-from schemas import OrganizationRelNumbsAndActivity, OrganizationDTO
+from src.orm import Orm
+from src.schemas import OrganizationRelNumbsAndActivity, OrganizationDTO
 
 
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
+
 
 
 
@@ -16,6 +14,10 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 
 app = FastAPI(title="Организации")
+
+@app.get('/')
+async def get_app():
+    return 'Hello my app'
 
 @app.get('/organizations', status_code=status.HTTP_200_OK)
 async def get_all_organizations() -> list[OrganizationRelNumbsAndActivity]:
@@ -54,6 +56,4 @@ async def get_organizations_by_activity(activity_name: str)-> dict:
     return {'data': result}
 
 if __name__ == "__main__":
-
-
     uvicorn.run(app="main:app", reload=True)
