@@ -17,7 +17,7 @@
 1. **Склонируйте репозиторий**:
    ```bash
    git clone <https://github.com/VehsagriX/task_organization.git>
-   cd <папка с проектом>
+   
 
 2. **Построение Docker-образа: Выполните команду для сборки Docker-образа:**
 
