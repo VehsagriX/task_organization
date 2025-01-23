@@ -37,6 +37,5 @@
    http://localhost:8000/docs
 ```
 **Скриншоты документации API**
-```markdown
+
 ![openapi.PNG](docs/github/openapi.PNG)
-```
