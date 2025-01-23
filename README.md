@@ -38,5 +38,5 @@
 ```
 **Скриншоты документации API**
 ```markdown
-  ![openapi.PNG](docs/github/openapi.PNG)
+![openapi.PNG](docs/github/openapi.PNG)
 ```
